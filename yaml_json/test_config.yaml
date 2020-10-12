@@ -1,0 +1,40 @@
+script: /home/luopengting/example/run.sh
+summary_base_dir: /home/luopengting/summaries
+method: gp
+target:
+    group: metric
+    name: Accuracy
+    goal: maxmize
+parameters:  # 可视别到的
+    learning_rate:
+        bound: [2, 5]
+        type: float  # bound是一定要给数值类型, 目标类型
+        method: exp
+        base: 0.1 # default: e
+    batch_size:
+        bound: [5, 8]
+        type: int  # 如果是单一数值类型，可以不需要写type，如果是混合的，需要给定type，需加强validation
+        method: exp
+        base: 2
+    epoch:
+        bound: [3, 6]
+        type: int
+        method: exp
+        base: 10  # default: e,  base ^ n
+user_defined:
+    padding_value:
+        bound: [0, 255]
+        type: int
+    momentum:
+        choice: [0.7, 0.8, 0.9]
+        type: float
+    shift:
+        bound: [-1, 1]
+        type: float
+    buffer_size:
+        bound: [1, 1000]
+        type: int
+    flip_prob:
+        bound: [0, 1]
+        type: float
+        decimal: 1
