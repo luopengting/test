@@ -1,4 +1,4 @@
-script: /home/luopengting/example/run.sh
+command: sh /home/luopengting/example/run.sh
 summary_base_dir: /home/luopengting/summaries
 method: gp
 target:

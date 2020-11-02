@@ -31,3 +31,13 @@ fruits = {"apple", "banana", "cherry"}
 
 fruits.remove("banana")
 print(fruits)
+
+list1 = ["method"]
+set1 = set(list1)
+list2 = ["method"]
+set2 = set(list2)
+
+if set1.issubset(list2):
+    print("yes")
+
+

@@ -17,5 +17,9 @@ print(b)
 b[0][1] = 2
 print(b)
 
-j = jsonify({"b": b})
-print(j)
+# j = jsonify({"b": b})
+# print(j)
+
+import json
+data2 = json.dumps({'a': 'Runoob', 'b': 7}, sort_keys=True, indent=4, separators=(',', ': '))
+print(data2)

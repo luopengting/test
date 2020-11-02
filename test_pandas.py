@@ -41,3 +41,16 @@ print(df)
 
 print(df["c1"].tolist())
 
+print("================dropna=====================")
+data = pd.DataFrame({
+    'a': [1, 3, 5, np.nan, 7, 9],
+    'b': ['a', 'b', np.nan, np.nan, 'd', 'e'],
+    'c': [1, 3, 5, 7, 9, 11],
+    'd': [np.nan, 2, 4, np.nan, np.nan, 6],
+    'e': [np.nan, 7, np.nan, np.nan, np.nan, np.nan]
+})
+
+data = data.dropna(axis=0, how='any')
+print(data)
+
+print(data['bb'])
