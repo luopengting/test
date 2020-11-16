@@ -32,3 +32,9 @@ from yaml_json.yaml2json import read_yaml
 new_config_dict = read_yaml(yaml_path)
 
 assert config_dict == new_config_dict
+
+
+def convert_dict_to_yaml(value: dict, output_dir, file_name='config.yaml'):
+    yaml_file = os.path.join(output_dir, file_name)
+    with open(yaml_file, 'w', encoding='utf-8') as file:
+        yaml.dump(value, file)
