@@ -70,13 +70,11 @@ class CkptMetric:
             data[op] = op_data
         return data
 
-    def get_metric_report(self, top=3):
+    def get_metric_report(self, report_file, top=3):
+        variance_dict = dict()
         metrics = collections.defaultdict(dict)
         ops = self._ops
         for op in ops:
-            sorted_variance, variance_shape, sorted_index = self._get_top_variance(op, top)
-            metrics[op].update({'variance': sorted_variance})
-
             try:
                 data_diff, data_diff_1 = self._cal_diff(op)
                 metrics[op].update({'direct_diff': np.max(data_diff)})
@@ -84,7 +82,15 @@ class CkptMetric:
             except ValueError as e:
                 metrics[op].update({'error': str(e)})
 
-        self.print_metric(metrics)
+            sorted_variance, variance, sorted_index = self._get_top_variance(op, top)
+            metrics[op].update({'variance': sorted_variance})
+
+            variance_dict.update({op: (variance, sorted_index)})
+
+        print("The metrics has been calculated. Start to write to file.")
+        self.print_metric(metrics, report_file)
+
+        return variance_dict
 
     def _cal_diff(self, op_name):
         op_data = self._data.get(op_name)
@@ -94,6 +100,9 @@ class CkptMetric:
         # calculate diff
         latest_data = op_data[1:]
         oldest_data = op_data[:-1]
+
+        if oldest_data[0].shape != latest_data[0].shape:
+            raise ValueError("Numbers of parameters is not equal: %s, %s." % (oldest_data[0].shape, latest_data[0].shape))
 
         data_diff = np.abs(np.subtract(latest_data, oldest_data))
 
@@ -113,12 +122,14 @@ class CkptMetric:
 
     def _get_top_variance(self, op_name, top=3):
         variance = self._cal_variance(op_name).reshape(-1)
-        sorted_index = list(np.argsort(-variance))
+        sorted_index = list(np.argsort(-variance))[:top]
         sorted_variance = list(variance[sorted_index])
 
-        return sorted_variance[:top], variance.shape, sorted_index[:top]
+        return sorted_variance, variance, sorted_index
 
-    def print_metric(self, metric):
+    def print_metric(self, metric, report_file):
+        if os.path.exists(report_file):
+            os.remove(report_file)
         for metric, value in metric.items():
             value_str = ""
             for name, v in value.items():
@@ -128,9 +139,37 @@ class CkptMetric:
                     value_str += " | %s: %s" % (name, v)
                 else:
                     value_str += " | %s: %0.8f" % (name, v)
-            print(metric.ljust(55), value_str)
+            with open(report_file, "a") as f:
+                print(metric.ljust(55), value_str, file=f)
+        print("Write metric ended.")
+
+
+def variance_compare(variance_dict1, variance_dict2, report_file):
+    # base on variance1
+    if os.path.exists(report_file):
+        os.remove(report_file)
+    f = open(report_file, "a")
+    for op, value1 in variance_dict1.items():
+        if op not in variance_dict2:
+            print(op, "not in dict2.", file=f)
+        value2 = variance_dict2.get(op)
+
+        variance1, sorted_index1 = value1
+        variance2, sorted_index2 = value2
+        if variance1.shape != variance2.shape:
+            print(op, "Their shape is not equal: %s, %s." % (variance1.shape, variance2.shape), file=f)
+
+        print(op.ljust(55), ": ", variance1.reshape(-1)[sorted_index1], variance2.reshape(-1)[sorted_index2], file=f)
+
+    f.close()
 
 
 if __name__ == "__main__":
-    gpu_metric = CkptMetric("")
-    gpu_metric.get_metric_report()
+    gpu_metric = CkptMetric("./gpu_step100_momentum")
+    gpu_variance_dict = gpu_metric.get_metric_report("gpu_step100_momentum.metric")
+
+    dchip_metric = CkptMetric("./dchip_step100_momentum")
+    dchip_variance_dict = dchip_metric.get_metric_report("dchip_step100_momentum.metric")
+
+    variance_compare(gpu_variance_dict, dchip_variance_dict, "dchip_variance_based_on_gpu.variance")
+    variance_compare(dchip_variance_dict, gpu_variance_dict, "gpu_variance_based_on_dchip.variance")
