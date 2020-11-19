@@ -8,19 +8,19 @@ FILENAME_REGEX = r'-(?P<epoch>\d+)_(?P<step>\d+)'
 ckpt_files = ['faster_rcnn-1_100.ckpt', 'faster_rcnn-0_20.ckpt', 'faster_rcnn-1_10.ckpt', 'faster_rcnn-1-30.ckpt']
 params_dict = [
     {
-        'op1': np.random.rand(10),
-        'op2': np.random.rand(4, 4),
-        'op3': np.random.rand(4, 4, 4)
+        'backbone.layer4.2.bn3.moving_variance': np.random.rand(10),
+        'moments.backbone.layer4.2.bn3.gamma': np.random.rand(4, 4),
+        'moments.rpn_with_loss.rpn_convs_list.0.rpn_conv.weight': np.random.rand(4, 4, 4)
     },
     {
-        'op1': np.random.rand(10),
-        'op2': np.random.rand(4, 4),
-        'op3': np.random.rand(4, 4, 4)
+        'backbone.layer4.2.bn3.moving_variance': np.random.rand(10),
+        'moments.backbone.layer4.2.bn3.gamma': np.random.rand(4, 4),
+        'moments.rpn_with_loss.rpn_convs_list.0.rpn_conv.weight': np.random.rand(4, 4, 4)
     },
     {
-        'op1': np.random.rand(10),
-        'op2': np.random.rand(4, 4),
-        'op3': np.random.rand(4, 4, 4)
+        'backbone.layer4.2.bn3.moving_variance': np.random.rand(10),
+        'moments.backbone.layer4.2.bn3.gamma': np.random.rand(4, 4),
+        'moments.rpn_with_loss.rpn_convs_list.0.rpn_conv.weight': np.random.rand(4, 4, 4)
     }
 ]
 
