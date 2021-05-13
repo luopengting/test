@@ -23,3 +23,16 @@ print(b)
 import json
 data2 = json.dumps({'a': 'Runoob', 'b': 7}, sort_keys=True, indent=4, separators=(',', ': '))
 print(data2)
+
+from json import JSONDecodeError
+try:
+    raise JSONDecodeError("error message", "s", 0)
+except ValueError:
+    print("Catch ValueError OK!")
+
+
+try:
+    with open('test_list.py', 'r') as f:
+        json.load(f)
+except ValueError:
+    print("Json load failed.")

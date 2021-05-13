@@ -1,0 +1,15 @@
+name:
+- a
+- b
+parameters:
+  batch_size:
+    choice:
+    - 16
+    - 32
+    - 64
+  learning_rate:
+    bounds:
+    - 0.001
+    - 0.002
+    type: int
+summary_base_dir: /home/summaries

@@ -12,4 +12,5 @@ b = a
 a.hello()
 del a
 b.hello()
+print("aaaaa")
 del b
